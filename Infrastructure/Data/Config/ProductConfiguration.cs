@@ -17,7 +17,7 @@ namespace Infrastructure.Data.Config
             builder.Property(p =>p.Description).IsRequired().HasMaxLength(180); 
             builder.Property(p =>p.Price).HasColumnType("decimal(18,2)"); 
             builder.Property(p =>p.PictureUrl).IsRequired();
-            builder.HasOne(b =>  b.productBrand).WithMany() ///one brand can associate with many product, Nike can have many product
+            builder.HasOne(b =>  b.ProductBrand).WithMany() ///one brand can associate with many product, Nike can have many product
             .HasForeignKey(p => p.ProductBrandId);
             builder.HasOne(t => t.ProductType).WithMany()  //one product type can associate with many product.  Nike can create many shoes, jacket prodcut type
             .HasForeignKey(p => p.ProductTypeId);         

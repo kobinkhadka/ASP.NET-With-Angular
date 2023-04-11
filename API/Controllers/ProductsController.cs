@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Core.Interface;
 using Core.Specification;
 using API.DTOS;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -14,37 +15,32 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        public IGenericRepository<Product> _prodcutRepo; 
-        public IGenericRepository<ProductBrand> _productBrandRepo;
-        public IGenericRepository<ProductType> _productTypeRepo; 
+        private IGenericRepository<Product> _prodcutRepo; 
+        private IGenericRepository<ProductBrand> _productBrandRepo;
+        private IGenericRepository<ProductType> _productTypeRepo; 
+    
+        private readonly IMapper _mapper;
 
         public ProductsController(IGenericRepository<Product> prodcutRepo, 
-            IGenericRepository<ProductBrand> productBrandRepo, IGenericRepository<ProductType> productTypeRepo)
+            IGenericRepository<ProductBrand> productBrandRepo, 
+            IGenericRepository<ProductType> productTypeRepo, IMapper mapper)
         {
+            _mapper = mapper;
             _prodcutRepo = prodcutRepo;
             _productBrandRepo = productBrandRepo;
             _productTypeRepo = productTypeRepo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductToReturnDTO>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDTO>>> GetProducts()
         {
             var spec = new ProductsWithTypesAndBrandsSpecification();
                
              var products = await _prodcutRepo.ListAsync(spec);
 
 
-             return products.Select(product => new ProductToReturnDTO
-             {
-                Id = product.Id, 
-                Name = product.Name, 
-                Description = product.Description, 
-                PictureUrl = product.PictureUrl, 
-                Price = product.Price, 
-                productBrand = product.productBrand.Name, 
-                ProductType = product.ProductType.Name
+             return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDTO>>(products));
              
-             }).ToList(); 
 
         }
 
@@ -80,16 +76,8 @@ namespace API.Controllers
           
           var product = await  _prodcutRepo.GetEntityWithSpec(spec);
 
-          return new ProductToReturnDTO 
-          {
-            Id = product.Id, 
-            Name = product.Name, 
-            Description = product.Description, 
-            PictureUrl = product.PictureUrl, 
-            Price = product.Price, 
-            productBrand = product.productBrand.Name, 
-            ProductType = product.ProductType.Name
-          };
+          return _mapper.Map<Product, ProductToReturnDTO>(product);
+         
 
 
 

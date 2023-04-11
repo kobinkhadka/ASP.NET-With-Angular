@@ -19,7 +19,7 @@ namespace API.DTOS
         public string ProductType { get; set; }
 
 
-        public string productBrand {get; set;}
+        public string ProductBrand {get; set;}
 
 
         
